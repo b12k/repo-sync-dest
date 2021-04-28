@@ -1,0 +1,25 @@
+name: Notify Clones
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
+jobs:
+  notify_clones:
+    if: github.event.pull_request.merged == true
+    strategy:
+      matrix:
+        repo:
+          # List of repos to notify
+          - b12k/repo-sync-dest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify clones
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{secrets.GH_TOKEN}}
+          repository: ${{ matrix.repo }}
+          event-type: template_repo_updated
