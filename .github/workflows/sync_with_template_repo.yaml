@@ -1,0 +1,28 @@
+name: Sync With Template Repo
+
+on:
+  repository_dispatch:
+    types: [template_repo_updated]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: |
+          git config --global user.name Bogdan Kolesnyk
+          git config --global user.email bogdan.kolesnyk@gmail.com
+          git checkout -b temp $(git rev-list --max-parents=0 HEAD | tail -n 1)
+          git pull "https://$TOKEN@github.com/$TEMPLATE.git" --allow-unrelated-histories --squash --strategy=recursive -X theirs
+          git add .
+          git reset -- $IGNORE
+          git commit -m "$MESSAGE $(date "+%Y-%m-%d %H:%M")" --amend
+          git push origin temp:"$BRANCH-$(date "+%y%m%d%H%M")"
+    env:
+      TOKEN: ${{ secrets.GH_TOKEN }}
+      IGNORE: ".github CHANGELOG.md"
+      BRANCH: "sync-with-template-repo"
+      MESSAGE: "chore(template): sync with template repo"
+      TEMPLATE: "b12k/repo-sync-source"
