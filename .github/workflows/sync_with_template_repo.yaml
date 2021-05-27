@@ -14,7 +14,7 @@ jobs:
       - run: |
           git config --global user.name Bogdan Kolesnyk
           git config --global user.email bogdan.kolesnyk@gmail.com
-          git checkout -b temp $(git rev-list --max-parents=0 HEAD | tail -n 1)
+          git checkout -b temp $(git log --all --grep=$MESSAGE --pretty=format:%h | head -n 1)
           git pull "https://$TOKEN@github.com/$TEMPLATE.git" --allow-unrelated-histories --squash --strategy=recursive -X theirs
           git add .
           git reset -- $IGNORE
@@ -24,5 +24,5 @@ jobs:
       TOKEN: ${{ secrets.GH_TOKEN }}
       IGNORE: ".github CHANGELOG.md"
       BRANCH: "sync-with-template-repo"
-      MESSAGE: "chore(template): sync with template repo"
+      MESSAGE: "chore(template): sync"
       TEMPLATE: "b12k/repo-sync-source"
