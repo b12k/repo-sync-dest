@@ -18,7 +18,7 @@ jobs:
           git pull "https://$TOKEN@github.com/$TEMPLATE.git" --allow-unrelated-histories --squash --strategy=recursive -X theirs
           git add .
           git reset -- $IGNORE
-          git commit -m "$MESSAGE $(date "+%Y-%m-%d %H:%M")" --amend
+          git commit -m "$MESSAGE $(date "+%Y-%m-%d %H:%M")"
           git push origin temp:"$BRANCH-$(date "+%y%m%d%H%M")"
     env:
       TOKEN: ${{ secrets.GH_TOKEN }}
